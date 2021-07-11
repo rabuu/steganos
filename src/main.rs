@@ -1,6 +1,6 @@
 extern crate image;
 
-use image::{DynamicImage, GenericImageView, ImageError, Pixel, io::Reader as ImageReader};
+use image::{DynamicImage, GenericImage, GenericImageView, ImageError, io::Reader as ImageReader};
 
 const MESSAGE: &str = "This is the message.";
 const KEY: &str = "This is the key.";
@@ -14,46 +14,30 @@ fn main() {
 
 }
 
-fn hide_msg_in_img(message: &str, key: &str, input_path: &str) -> Result<DynamicImage, ImageError> {
+fn hide_msg_in_img(msg: &str, _key: &str, input_path: &str) -> Result<DynamicImage, ImageError> {
+
     let mut img = ImageReader::open(input_path)?.decode()?;
+    let msg_bytes = msg.as_bytes();
+
+    let mut msg_bits = Vec::new();
+    for byte in msg_bytes {
+        for i in 0..8 {
+            msg_bits.push((byte & (1 << i)) / (1 << i));
+        }
+    }
 
     let mut p = 0;
     for i in 0..img.width() {
         for j in 0..img.height() {
-            let pix = img.get_pixel(i, j);
-            println!("{}: {}", p, pix[0]);
-            
+            let mut pix = img.get_pixel(i, j);
+            pix[p % 3] >>= 1;
+            pix[p % 3] = (pix[p % 3] << 1) | msg_bits[p % msg_bits.len()];
+
+            img.put_pixel(i, j, pix);
+
             p += 1;
         }
     }
 
     Ok(img)
 }
-
-// fn image2matrix(img_path: &str) -> Result<ImgMatrix, ImageError> {
-//     let img = ImageReader::open(img_path)?.decode()?;
-//     let mut matrix: ImgMatrix = Vec::new();
-
-//     for i in 0..img.width() {
-//         matrix.push(Vec::new());
-//         for j in 0..img.height() {
-//             matrix[i as usize].push(img.get_pixel(i as u32, j as u32).to_rgb());
-//         } 
-//     }
-
-//     Ok(matrix)
-// }
-
-// fn encrypt(img: ImgMatrix, msg: String) -> ImgMatrix {
-//     fn hide_bit() -> Rgb<u8> {
-//         Rgb([255, 255, 255])
-//     }
-//     let mut encr: ImgMatrix = Vec::new();
-//     for i in 0..img.len() {
-//         encr.push(Vec::new());
-//         for j in 0..img[i].len() {
-//             encr[i].push(hide_bit());
-//         }
-//     }
-//     encr
-// }
