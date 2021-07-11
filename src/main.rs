@@ -1,60 +1,59 @@
 extern crate image;
 
-use image::{DynamicImage, GenericImage, GenericImageView, ImageError, Pixel, Rgb, io::Reader as ImageReader};
+use image::{DynamicImage, GenericImageView, ImageError, Pixel, io::Reader as ImageReader};
 
-type ImgMatrix = Vec<Vec<Rgb<u8>>>;
+const MESSAGE: &str = "This is the message.";
+const KEY: &str = "This is the key.";
+const INPUT_PATH: &str = "test16.png";
+const OUTPUT_PATH: &str = "output.png";
 
 fn main() {
 
-    let x: ImgMatrix = image2matrix("test16.png").unwrap();
-    let y = encrypt(x, "hey".to_string());
-    save_img(y, "testsave.png")
+    let encrypted_img = hide_msg_in_img(MESSAGE, KEY, INPUT_PATH).unwrap();
+    encrypted_img.save(OUTPUT_PATH).unwrap();
 
 }
 
-fn image2matrix(img_path: &str) -> Result<ImgMatrix, ImageError> {
-    let img = ImageReader::open(img_path)?.decode()?;
-    let mut matrix: ImgMatrix = Vec::new();
+fn hide_msg_in_img(message: &str, key: &str, input_path: &str) -> Result<DynamicImage, ImageError> {
+    let mut img = ImageReader::open(input_path)?.decode()?;
 
+    let mut p = 0;
     for i in 0..img.width() {
-        matrix.push(Vec::new());
         for j in 0..img.height() {
-            matrix[i as usize].push(img.get_pixel(i as u32, j as u32).to_rgb());
-        } 
-    }
-
-    Ok(matrix)
-}
-
-fn encrypt(img: ImgMatrix, msg: String) -> ImgMatrix {
-    fn hide_bit() -> Rgb<u8> {
-        Rgb([255, 255, 255])
-    }
-    let mut encr: ImgMatrix = Vec::new();
-    for i in 0..img.len() {
-        encr.push(Vec::new());
-        for j in 0..img[i].len() {
-            encr[i].push(hide_bit());
+            let pix = img.get_pixel(i, j);
+            println!("{}: {}", p, pix[0]);
+            
+            p += 1;
         }
     }
-    encr
+
+    Ok(img)
 }
 
-fn save_img(imgmatrix: ImgMatrix, path: &str) {
-    let mut img: DynamicImage = DynamicImage::new_rgb8(imgmatrix.len() as u32, imgmatrix[0].len() as u32);
-    for i in 0..imgmatrix.len() {
-        for j in 0..imgmatrix[i].len() {
-            img.put_pixel(i as u32, j as u32, imgmatrix[i][j].to_rgba());
-        }
-    }
-    img.save(path).unwrap();
-}
+// fn image2matrix(img_path: &str) -> Result<ImgMatrix, ImageError> {
+//     let img = ImageReader::open(img_path)?.decode()?;
+//     let mut matrix: ImgMatrix = Vec::new();
 
-    // let mut x: u8 = 0b1101_1111;
-    // let bit: bool = true;
-    // if x & 1 != 0 && !bit {
-    //     x -= 1;
-    // } else if x & 1 == 0 && bit { 
-    //     x += 1;
-    // }
-    // println!("{}", x);
+//     for i in 0..img.width() {
+//         matrix.push(Vec::new());
+//         for j in 0..img.height() {
+//             matrix[i as usize].push(img.get_pixel(i as u32, j as u32).to_rgb());
+//         } 
+//     }
+
+//     Ok(matrix)
+// }
+
+// fn encrypt(img: ImgMatrix, msg: String) -> ImgMatrix {
+//     fn hide_bit() -> Rgb<u8> {
+//         Rgb([255, 255, 255])
+//     }
+//     let mut encr: ImgMatrix = Vec::new();
+//     for i in 0..img.len() {
+//         encr.push(Vec::new());
+//         for j in 0..img[i].len() {
+//             encr[i].push(hide_bit());
+//         }
+//     }
+//     encr
+// }
