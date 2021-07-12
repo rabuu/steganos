@@ -1,5 +1,7 @@
 extern crate image;
 
+use std::str::from_utf8;
+
 use image::{DynamicImage, GenericImage, GenericImageView, ImageError, io::Reader as ImageReader};
 
 type BitVec = Vec<u8>;
@@ -15,7 +17,8 @@ fn main() {
     // let encrypted_img = hide_msg_in_img(MESSAGE, KEY, INPUT_PATH).unwrap();
     // encrypted_img.save(OUTPUT_PATH).unwrap();
 
-    let decrypted_msg = extract_msg_from_img(ENCRYPTED_INPUT_PATH, KEY);
+    let decrypted_msg = extract_msg_from_img(ENCRYPTED_INPUT_PATH, KEY).unwrap();
+    println!("{}", decrypted_msg);
 
 }
 
@@ -43,7 +46,7 @@ fn hide_msg_in_img(msg: &str, key: &str, input_path: &str) -> Result<DynamicImag
                         pix[k] = ((pix[k] << 2) | msg_bits[msg_pos % msg_bits.len()] << 1) | msg_bits[(msg_pos + 1) % msg_bits.len()];
                         msg_pos += 2;
                     },
-                    _ => panic!("Unexpected! BitVec contains something else than 0 or 1")
+                    _ => panic!("BitVec contains something else than 0 or 1")
                 }
                 img.put_pixel(i, j, pix);
                 key_pos += 1;
@@ -57,7 +60,7 @@ fn extract_msg_from_img(input_path: &str, key: &str) -> Result<String, ImageErro
 
     let img = ImageReader::open(input_path)?.decode()?;
     let key_bits = str_to_bitvec(key);
-    let mut msg_bytes: Vec<u8> = Vec::new();
+    let mut msg_bits: BitVec = Vec::new();
 
     let mut key_pos = 0;
     for i in 0..img.width() {
@@ -67,11 +70,11 @@ fn extract_msg_from_img(input_path: &str, key: &str) -> Result<String, ImageErro
             for k in 0..3 {
                 match key_bits[key_pos % key_bits.len()] {
                     0 => {
-                        print!("{}", pix[k] & 1);
+                        msg_bits.push(pix[k] & 1);
                     },
                     1 => {
-                        print!("{}", (pix[k] & (1 << 1)) / 2);
-                        print!("{}", pix[k] & 1);
+                        msg_bits.push((pix[k] & (1 << 1)) / 2);
+                        msg_bits.push(pix[k] & 1);
                     },
                     _ => panic!()
                 }
@@ -79,7 +82,7 @@ fn extract_msg_from_img(input_path: &str, key: &str) -> Result<String, ImageErro
             }
         }
     }
-    Ok("dummy".to_string())
+    Ok(bitvec_to_str(msg_bits))
 }
 
 fn str_to_bitvec(string: &str) -> BitVec {
@@ -90,4 +93,18 @@ fn str_to_bitvec(string: &str) -> BitVec {
         }
     }
     bitvec
+}
+
+fn bitvec_to_str(bitvec: BitVec) -> String {
+    let mut bytes: Vec<u8> = Vec::new();
+    for i in 0..bitvec.len() {
+        if i % 8 == 0 {
+            bytes.push(0);
+        }
+        *bytes.last_mut().unwrap() = (bytes.last().unwrap() << 1) | bitvec[i];
+    }
+    unsafe {
+        let string = String::from_utf8_unchecked(bytes);
+        string
+    }
 }
