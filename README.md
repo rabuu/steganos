@@ -74,5 +74,5 @@ So if you hide a short message, nevertheless every pixel is manipulated.
 The output of the decrypt function is therefore as long as the image is big.
 To prevent outputting a way to big message when you decrypt
 you can specify a EOM identifier. This is a pattern to declare the message ended.
-The default value is `*[EOM]*`.
+The default value is `*[END]*`.
 Now you can put this identifier inside of your message and steganos will only output what is before this pattern.
