@@ -1,5 +1,5 @@
 # steganos
-steganos is a simple program to hide message in an image
+steganos is a simple program to hide a message in an image
 or to extract a message from such an image, respectively.
 
 ## basic concept
