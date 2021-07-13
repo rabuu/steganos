@@ -6,11 +6,13 @@ use image::{DynamicImage, GenericImage, GenericImageView, ImageError, io::Reader
 
 type BitVec = Vec<u8>;
 
-const MESSAGE: &str = "This is the message.";
+const MESSAGE: &str = "This is the message.*[END]*";
 const KEY: &str = "This is the key.";
-const INPUT_PATH: &str = "test16.png";
-const OUTPUT_PATH: &str = "output.png";
-const ENCRYPTED_INPUT_PATH: &str = "test16-encrypted.png";
+const INPUT_PATH: &str = "tests/test16.png";
+const OUTPUT_PATH: &str = "tests/output.png";
+const ENCRYPTED_INPUT_PATH: &str = "tests/test16-encrypted.png";
+
+const EOM_IDENTIFIER: &str = "*[END]*";
 
 fn main() {
 
@@ -82,7 +84,9 @@ fn extract_msg_from_img(input_path: &str, key: &str) -> Result<String, ImageErro
             }
         }
     }
-    Ok(bitvec_to_str(msg_bits))
+    let msg = bitvec_to_str(msg_bits);
+    Ok(cut_str_eom(msg, EOM_IDENTIFIER))
+    
 }
 
 fn str_to_bitvec(string: &str) -> BitVec {
@@ -105,6 +109,15 @@ fn bitvec_to_str(bitvec: BitVec) -> String {
     }
     unsafe {
         let string = String::from_utf8_unchecked(bytes);
+        string
+    }
+}
+
+fn cut_str_eom(string: String, eom: &str) -> String {
+    let i = string.find(eom);
+    if i != None {
+        string[..i.unwrap()].to_string()
+    } else {
         string
     }
 }
