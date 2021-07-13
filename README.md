@@ -46,10 +46,10 @@ the current key character is also `a`.
 [255, 255, 255] -> 	1 1 1 1 1 1 1 1  |  1 1 1 1 1 1 1 1  | 1 1 1 1 1 1 1 1
 
 # message
-'a' -> 				0 1 1 0 0 0 0 1
+'a' -> 	0 1 1 0 0 0 0 1
 
 # key
-'a' -> 				0 1 1 0 0 0 0 1
+'a' -> 	0 1 1 0 0 0 0 1
 
 # first bit: key is 0, so everything is normal
 1 1 1 1 1 1 1 1 # original value (red)
