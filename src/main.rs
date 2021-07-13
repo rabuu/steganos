@@ -1,27 +1,37 @@
 extern crate image;
 
-use std::str::from_utf8;
+#[macro_use]
+extern crate clap;
 
+use clap::App;
 use image::{DynamicImage, GenericImage, GenericImageView, ImageError, io::Reader as ImageReader};
 
 type BitVec = Vec<u8>;
 
-const MESSAGE: &str = "This is the message.*[END]*";
-const KEY: &str = "This is the key.";
-const INPUT_PATH: &str = "tests/test16.png";
-const OUTPUT_PATH: &str = "tests/output.png";
-const ENCRYPTED_INPUT_PATH: &str = "tests/test16-encrypted.png";
-
-const EOM_IDENTIFIER: &str = "*[END]*";
+const EOM_DEFAULT: &str = "*[END]*";
 
 fn main() {
 
-    // let encrypted_img = hide_msg_in_img(MESSAGE, KEY, INPUT_PATH).unwrap();
-    // encrypted_img.save(OUTPUT_PATH).unwrap();
+    let yaml = load_yaml!("cli.yml");
+    let clap = App::from_yaml(yaml).get_matches();
 
-    let decrypted_msg = extract_msg_from_img(ENCRYPTED_INPUT_PATH, KEY).unwrap();
-    println!("{}", decrypted_msg);
+    if let Some(clap) = clap.subcommand_matches("encrypt") {
+        let message = clap.value_of("message").unwrap();
+        let key = clap.value_of("key").unwrap();
+        let image = clap.value_of("image").unwrap();
+        let output = clap.value_of("output").unwrap_or("./encrypted_image.png");
 
+        let encrypted_img = hide_msg_in_img(message, key, image).unwrap();
+        encrypted_img.save(output).unwrap();
+    }
+    else if let Some(clap) = clap.subcommand_matches("decrypt") {
+        let image = clap.value_of("image").unwrap();
+        let key = clap.value_of("key").unwrap();
+        let eom = clap.value_of("eom").unwrap_or(EOM_DEFAULT);
+
+        let decrypted_msg = extract_msg_from_img(image, key, eom).unwrap();
+        println!("{}", decrypted_msg);
+    }
 }
 
 fn hide_msg_in_img(msg: &str, key: &str, input_path: &str) -> Result<DynamicImage, ImageError> {
@@ -58,7 +68,7 @@ fn hide_msg_in_img(msg: &str, key: &str, input_path: &str) -> Result<DynamicImag
     Ok(img)
 }
 
-fn extract_msg_from_img(input_path: &str, key: &str) -> Result<String, ImageError> {
+fn extract_msg_from_img(input_path: &str, key: &str, eom: &str) -> Result<String, ImageError> {
 
     let img = ImageReader::open(input_path)?.decode()?;
     let key_bits = str_to_bitvec(key);
@@ -85,7 +95,7 @@ fn extract_msg_from_img(input_path: &str, key: &str) -> Result<String, ImageErro
         }
     }
     let msg = bitvec_to_str(msg_bits);
-    Ok(cut_str_eom(msg, EOM_IDENTIFIER))
+    Ok(cut_str_eom(msg, eom))
     
 }
 

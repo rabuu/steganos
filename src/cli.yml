@@ -1,0 +1,56 @@
+name: steganos
+version: "1.0"
+author: rabuu
+about: Hide a text message in an image
+settings:
+    - ArgRequiredElseHelp
+subcommands:
+    - encrypt:
+        about: hide a text message in an image
+        args:
+            - message:
+                short: m
+                long: message
+                required: true
+                takes_value: true
+                help: pass the message you want to hide
+            - key:
+                short: k
+                long: key
+                required: true
+                takes_value: true
+                help: pass a string of text as a key
+            - image:
+                short: i
+                long: image
+                required: true
+                takes_value: true
+                value_name: FILE
+                help: pass an image in which the message will be hidden
+            - output:
+                short: o
+                long: output
+                takes_value: true
+                help: where to save the output
+    - decrypt:
+        about: extract a hidden message from an image
+        args:
+            - image:
+                short: i
+                long: image
+                required: true
+                takes_value: true
+                value_name: FILE
+                help: pass an image from which the message will be extracted
+            - key:
+                short: k
+                long: key
+                required: true
+                takes_value: true
+                help: pass a key needed to decrypt the message correctly
+            - eom:
+                short: e
+                long: end-of-message
+                required: false
+                takes_value: true
+                help: pass a special identifier where to stop printing the message
