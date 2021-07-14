@@ -72,19 +72,20 @@ fn hide_msg_in_img(msg: &str, key: &str, input_path: &str) -> Result<DynamicImag
             let mut pix = img.get_pixel(i, j);
 
             // iterate through the RGB values of each pixel
-            for k in 0..3 {
+            for rgb in 0..3 {
 
                 // current key value == 0 -> manipulate last bit
                 // current key value == 1 -> manipulate the last two bits
                 match key_bits[key_pos % key_bits.len()] {
                     0 => {
-                        pix[k] >>= 1;
-                        pix[k] = (pix[k] << 1) | msg_bits[msg_pos % msg_bits.len()];
-                        msg_pos += 1;
+                        pix[rgb] >>= 1; // bit shift to get rid of last bit
+                        pix[rgb] = (pix[rgb] << 1) | msg_bits[msg_pos % msg_bits.len()]; // shift back and set last bit to msg_bit
+                        msg_pos += 1; // increase position of current msg_bit to hide
                     },
                     1 => {
-                        pix[k] >>= 2;
-                        pix[k] = ((pix[k] << 2) | msg_bits[msg_pos % msg_bits.len()] << 1) | msg_bits[(msg_pos + 1) % msg_bits.len()];
+                        // same as above but with last two bits
+                        pix[rgb] >>= 2;
+                        pix[rgb] = ((pix[rgb] << 2) | msg_bits[msg_pos % msg_bits.len()] << 1) | msg_bits[(msg_pos + 1) % msg_bits.len()];
                         msg_pos += 2;
                     },
                     _ => panic!("BitVec contains something else than 0 or 1")
@@ -124,17 +125,17 @@ fn extract_msg_from_img(input_path: &str, key: &str, eom: &str, include_eom: boo
             let pix = img.get_pixel(i, j);
 
             // iterate through the RGB values of each pixel
-            for k in 0..3 {
+            for rgb in 0..3 {
 
                 // current key value == 0 -> store last bit
                 // current key value == 1 -> store last two bits
                 match key_bits[key_pos % key_bits.len()] {
                     0 => {
-                        msg_bits.push(pix[k] & 1);
+                        msg_bits.push(pix[rgb] & 1); // push least significant bit
                     },
                     1 => {
-                        msg_bits.push((pix[k] & (1 << 1)) / 2);
-                        msg_bits.push(pix[k] & 1);
+                        msg_bits.push((pix[rgb] & (1 << 1)) / 2); // push second least significant bit
+                        msg_bits.push(pix[rgb] & 1); // push least significant bit
                     },
                     _ => panic!()
                 }
@@ -158,7 +159,11 @@ fn extract_msg_from_img(input_path: &str, key: &str, eom: &str, include_eom: boo
 // example: "hey" -> [0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1]
 fn str_to_bitvec(string: &str) -> BitVec {
     let mut bitvec: BitVec = Vec::new();
+
+    // iterate over every byte of the string
     for byte in string.as_bytes() {
+
+        // get each of the eight bits of a byte and push it seperatly
         for i in 0..8 {
             bitvec.push((byte & (1 << (7 - i))) / (1 << (7 - i)));
         }
@@ -170,10 +175,16 @@ fn str_to_bitvec(string: &str) -> BitVec {
 // example: [0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1] -> "hey"
 fn bitvec_to_str(bitvec: BitVec) -> String {
     let mut bytes: Vec<u8> = Vec::new();
+
+    // iterate over every bit
     for i in 0..bitvec.len() {
+
+        // every eighth bit, push a new empty byte
         if i % 8 == 0 {
             bytes.push(0);
         }
+
+        // add bit to last pushed byte
         *bytes.last_mut().unwrap() = (bytes.last().unwrap() << 1) | bitvec[i];
     }
     unsafe {
