@@ -1,6 +1,4 @@
 name: steganos
-version: "1.0"
-author: rabuu
 about: Hide a text message in an image
 settings:
     - ArgRequiredElseHelp
@@ -54,3 +52,9 @@ subcommands:
                 required: false
                 takes_value: true
                 help: pass a special identifier where to stop printing the message
+            - include-eom:
+                short: E
+                long: include-eom
+                required: false
+                takes_value: false
+                help: pass this flag if the EOM identifier should be printed

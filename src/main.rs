@@ -12,8 +12,8 @@ use image::{DynamicImage, GenericImage, GenericImageView, ImageError, io::Reader
 type BitVec = Vec<u8>;
 
 /* DEFAULTS */
-const EOM_DEFAULT: &str = "*[END]*";
 const ENCRYPTED_OUTPUT_DEFAULT: &str = "./encrypted_image.png";
+const EOM_DEFAULT: &str = "*[END]*";
 
 
 /* MAIN FUNCTION */
@@ -41,9 +41,10 @@ fn main() {
         let image = clap.value_of("image").unwrap();
         let key = clap.value_of("key").unwrap();
         let eom = clap.value_of("eom").unwrap_or(EOM_DEFAULT);
+        let include_eom = clap.is_present("include-eom");
 
         // decrypt and output message
-        let decrypted_msg = extract_msg_from_img(image, key, eom).unwrap();
+        let decrypted_msg = extract_msg_from_img(image, key, eom, include_eom).unwrap();
         println!("{}", decrypted_msg);
     }
 }
@@ -101,7 +102,7 @@ fn hide_msg_in_img(msg: &str, key: &str, input_path: &str) -> Result<DynamicImag
 }
 
 /* DECRYPTION FUNCTION */
-fn extract_msg_from_img(input_path: &str, key: &str, eom: &str) -> Result<String, ImageError> {
+fn extract_msg_from_img(input_path: &str, key: &str, eom: &str, include_eom: bool) -> Result<String, ImageError> {
 
     // read image
     let img = ImageReader::open(input_path)?.decode()?;
@@ -146,7 +147,7 @@ fn extract_msg_from_img(input_path: &str, key: &str, eom: &str) -> Result<String
     let msg = bitvec_to_str(msg_bits);
 
     // return the message (EOM cut)
-    Ok(cut_str_eom(msg, eom))
+    Ok(cut_str_eom(msg, eom, include_eom))
     
 }
 
@@ -182,10 +183,14 @@ fn bitvec_to_str(bitvec: BitVec) -> String {
 }
 
 // cut a string if a pattern (EOM) matches
-fn cut_str_eom(string: String, eom: &str) -> String {
+fn cut_str_eom(string: String, eom: &str, include_eom: bool) -> String {
     let i = string.find(eom);
     if i != None {
-        string[..i.unwrap()].to_string()
+        if include_eom {
+            string[..i.unwrap() + eom.len()].to_string()
+        } else {
+            string[..i.unwrap()].to_string()
+        }
     } else {
         string
     }
