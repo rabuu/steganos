@@ -12,7 +12,7 @@ Example: We want to hide the text `a` in a picture.
 ```
 [255, 255, 255]	# this is the first pixel, it's black.
 
-# the RGB values as bits looks as follows:
+# the RGB values as bits look as follows:
 1 1 1 1 1 1 1 1  |  1 1 1 1 1 1 1 1  |  1 1 1 1 1 1 1 1
 
 # the first character of our message is 'a', in bits:
