@@ -1,9 +1,13 @@
 name: steganos
+version: 0.1.0
+author: rabuu
 about: Hide a text message in an image
 settings:
     - ArgRequiredElseHelp
 subcommands:
     - encrypt:
+        version: 0.1.0
+        author: rabuu
         about: hide a text message in an image
         args:
             - message:
@@ -31,6 +35,8 @@ subcommands:
                 takes_value: true
                 help: location where to save the output image
     - decrypt:
+        version: 0.1.0
+        author: rabuu
         about: extract a hidden message from an image
         args:
             - image:
