@@ -1,6 +1,4 @@
 /* EXTERN CRATES */
-extern crate image;
-
 #[macro_use]
 extern crate clap; // CLI framework
 
@@ -45,7 +43,7 @@ fn main() {
 
         // decrypt and output message
         let decrypted_msg = extract_msg_from_img(image, key, eom, include_eom).unwrap();
-        println!("{}", decrypted_msg);
+        print!("{}", decrypted_msg);
     }
 }
 
