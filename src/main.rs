@@ -5,6 +5,8 @@ extern crate clap; // CLI framework
 /* IMPORTS */
 use clap::App;
 use image::{DynamicImage, GenericImage, GenericImageView, ImageError, io::Reader as ImageReader};
+use std::fs::File;
+use std::io::Write;
 
 /* TYPE DEFINITIONS */
 type BitVec = Vec<u8>;
@@ -43,7 +45,15 @@ fn main() {
 
         // decrypt and output message
         let decrypted_msg = extract_msg_from_img(image, key, eom, include_eom).unwrap();
-        println!("{}", decrypted_msg);
+
+        // if output location is given, write message to file; otherwise just print it out
+        if clap.is_present("output") {
+            let path = clap.value_of("output").unwrap();
+            let mut file = File::create(path).expect("File creation failed");
+            file.write_all(decrypted_msg.as_bytes()).expect("Writing to file failed");
+        } else {
+            println!("{}", decrypted_msg);
+        }
     }
 }
 

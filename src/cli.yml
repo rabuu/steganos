@@ -23,13 +23,13 @@ subcommands:
                 long: image
                 required: true
                 takes_value: true
-                value_name: FILE
                 help: pass an image in which the message will be hidden
             - output:
                 short: o
                 long: output
+                required: false
                 takes_value: true
-                help: where to save the output
+                help: location where to save the output image
     - decrypt:
         about: extract a hidden message from an image
         args:
@@ -38,7 +38,6 @@ subcommands:
                 long: image
                 required: true
                 takes_value: true
-                value_name: FILE
                 help: pass an image from which the message will be extracted
             - key:
                 short: k
@@ -46,6 +45,12 @@ subcommands:
                 required: true
                 takes_value: true
                 help: pass a key needed to decrypt the message correctly
+            - output:
+                short: o
+                long: output
+                required: false
+                takes_value: true
+                help: location where to save the decrypted message, if not given message is printed to STDOUT
             - eom:
                 short: e
                 long: end-of-message
