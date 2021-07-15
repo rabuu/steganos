@@ -185,10 +185,10 @@ fn bitvec_to_str(bitvec: BitVec) -> String {
         // add bit to last pushed byte
         *bytes.last_mut().unwrap() = (bytes.last().unwrap() << 1) | bitvec[i];
     }
-    unsafe {
-        let string = String::from_utf8_unchecked(bytes);
-        string
-    }
+
+    // convert bytes into string and return it
+    let string = String::from_utf8_lossy(&bytes).into_owned();
+    string
 }
 
 // cut a string if a pattern (EOM) matches
