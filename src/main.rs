@@ -43,7 +43,7 @@ fn main() {
 
         // decrypt and output message
         let decrypted_msg = extract_msg_from_img(image, key, eom, include_eom).unwrap();
-        print!("{}", decrypted_msg);
+        println!("{}", decrypted_msg);
     }
 }
 
