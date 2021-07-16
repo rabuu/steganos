@@ -79,6 +79,6 @@ The default value is `*[END]*`.
 Now you can put this identifier inside of your message and steganos will only output what is before this pattern.
 
 ## tests
-There are [tests](src/tests/) included in this repo.
+There are [tests](tests/) included in this repo.
 The encrypted files are encrypted using the key `This is the key.`
 and the message hidden in the images is `This is the message.*[END]*`.
