@@ -12,8 +12,8 @@ pub fn str_to_bitvec(string: &str) -> BitVec {
     for byte in string.as_bytes() {
 
         // get each of the eight bits of a byte and push it seperatly
-        for i in 0..8 {
-            bitvec.push((byte & (1 << (7 - i))) / (1 << (7 - i)));
+        for i in (0..8).rev() {
+            bitvec.push((byte & (1 << i)) / (1 << i));
         }
     }
     bitvec
