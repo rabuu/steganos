@@ -10,7 +10,7 @@ Therefore one pixel can store three bits if only one bit is manipulated.<br>
 
 Example: We want to hide the text `a` in a picture.
 ```
-[255, 255, 255]	# this is the first pixel, it's black.
+[255, 255, 255]	# this is the first pixel, it's white.
 
 # the RGB values as bits look as follows:
 1 1 1 1 1 1 1 1  |  1 1 1 1 1 1 1 1  |  1 1 1 1 1 1 1 1
