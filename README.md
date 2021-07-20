@@ -2,6 +2,17 @@
 steganos is a simple program to hide a message in an image
 or to extract a message from such an image, respectively.
 
+## usage
+```sh
+# encryption:
+steganos encrypt --image <IMAGE_FILE> --message <MESSAGE_STRING> --key <KEY_STRING> [--output <OUTPUT_FILE>]
+steganos encrypt -i <IMAGE_FILE> -m <MESSAGE_STRING> -k <KEY_STRING> [-o <OUTPUT_FILE>] # shorter version
+
+# decryption:
+steganos decrypt --image <IMAGE_FILE> --key <KEY_STRING> [--end-of-message <EOM_STRING>] [--include-eom]
+steganos decrypt -i <IMAGE_FILE> -k <KEY_STRING> [-e <EOM_STRING>] [-E] # shorter version
+```
+
 ## basic concept
 The concept is anything but special, it's a simple steganographic task.
 Each bit of a text message is hidden in one of the RGB values of a pixel in an image.
