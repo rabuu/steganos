@@ -7,6 +7,7 @@ mod steganography;
 
 /* IMPORTS */
 use clap::App;
+
 use std::fs::File;
 use std::io::Write;
 
@@ -35,8 +36,8 @@ fn main() {
         let output = clap.value_of("output").unwrap_or(ENCRYPTED_OUTPUT_DEFAULT);
 
         // encrypt and save file
-        let encrypted_img = encrypt(message, key, image).unwrap();
-        encrypted_img.save(output).unwrap();
+        let encrypted_img = encrypt(message, key, image).expect("Encryption failed");
+        encrypted_img.save(output).expect("Saving image failed");
 
     }
 
