@@ -46,11 +46,10 @@ pub fn cut_str_eom(string: String, eom: &str, include_eom: bool) -> String {
     let i = string.find(eom);
     if i != None {
         if include_eom {
-            string[..i.unwrap() + eom.len()].to_string()
+            return string[..i.unwrap() + eom.len()].to_string();
         } else {
-            string[..i.unwrap()].to_string()
+            return string[..i.unwrap()].to_string();
         }
-    } else {
-        string
     }
+    string
 }

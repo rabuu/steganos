@@ -38,7 +38,8 @@ pub fn encrypt(msg: &str, key: &str, input_path: &str) -> Result<DynamicImage, I
                     1 => {
                         // same as above but with last two bits
                         pix[rgb] >>= 2;
-                        pix[rgb] = ((pix[rgb] << 2) | msg_bits[msg_pos % msg_bits.len()] << 1) | msg_bits[(msg_pos + 1) % msg_bits.len()];
+                        pix[rgb] = (pix[rgb] << 2) | (msg_bits[msg_pos % msg_bits.len()] << 1);
+                        pix[rgb] |= msg_bits[(msg_pos + 1) % msg_bits.len()];
                         msg_pos += 2;
                     },
                     _ => panic!("BitVec contains something else than 0 or 1")
@@ -102,7 +103,8 @@ pub fn decrypt(input_path: &str, key: &str, eom: &str, include_eom: bool) -> Res
     // parse the stored bits to a string
     let msg = bitvec_to_str(msg_bits);
 
-    // return the message (EOM cut)
-    Ok(cut_str_eom(msg, eom, include_eom))
+    // EOM trim and return
+    let msg = cut_str_eom(msg, eom, include_eom);
+    Ok(msg)
     
 }
