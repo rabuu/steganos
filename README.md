@@ -94,7 +94,7 @@ There are [tests](tests/) included in this repo.
 The encrypted files are encrypted using the key `This is the key.`
 and the message hidden in the images is `This is the message.*[END]*`.
 
-# GTK
+## GTK
 There is a GTK4 app in development. You need to have `gtk4` installed on your machine when you want to use it.
 The app is only a GUI for steganos, there is not more functionality.
 For now the app is very unhandy, unsafe and all in all not good.
