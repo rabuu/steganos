@@ -55,7 +55,7 @@ the current message character to hide is again `a` and
 the current key character is also `a`.
 ```
 # first pixel
-[255, 255, 255] -> 	1 1 1 1 1 1 1 1  |  1 1 1 1 1 1 1 1  | 1 1 1 1 1 1 1 1
+[255, 255, 255] -> 	1 1 1 1 1 1 1 1  |  1 1 1 1 1 1 1 1  |  1 1 1 1 1 1 1 1
 
 # message
 'a' -> 	0 1 1 0 0 0 0 1
