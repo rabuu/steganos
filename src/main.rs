@@ -11,24 +11,20 @@ use clap::App;
 use std::fs::File;
 use std::io::Write;
 
-use steganography::{encrypt, decrypt};
-
+use steganography::{decrypt, encrypt};
 
 /* DEFAULTS */
 const ENCRYPTED_OUTPUT_DEFAULT: &str = "./encrypted_image.png";
 const EOM_DEFAULT: &str = "*[END]*";
 
-
 /* MAIN FUNCTION */
 fn main() {
-
     // load cli.yml (the clap/CLI configuration)
     let yaml = load_yaml!("cli.yml");
     let clap = App::from_yaml(yaml).get_matches();
 
     // encrypt subcommand
     if let Some(clap) = clap.subcommand_matches("encrypt") {
-
         // store cli args
         let message = clap.value_of("message").unwrap();
         let key = clap.value_of("key").unwrap();
@@ -38,12 +34,9 @@ fn main() {
         // encrypt and save file
         let encrypted_img = encrypt(message, key, image).expect("Encryption failed");
         encrypted_img.save(output).expect("Saving image failed");
-
     }
-
     // decrypt subcommand
     else if let Some(clap) = clap.subcommand_matches("decrypt") {
-
         // store cli args
         let image = clap.value_of("image").unwrap();
         let key = clap.value_of("key").unwrap();
@@ -57,7 +50,8 @@ fn main() {
         if clap.is_present("output") {
             let path = clap.value_of("output").unwrap();
             let mut file = File::create(path).expect("File creation failed");
-            file.write_all(decrypted_msg.as_bytes()).expect("Writing to file failed");
+            file.write_all(decrypted_msg.as_bytes())
+                .expect("Writing to file failed");
         } else {
             println!("{}", decrypted_msg);
         }

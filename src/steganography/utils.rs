@@ -10,7 +10,6 @@ pub fn str_to_bitvec(string: &str) -> BitVec {
 
     // iterate over every byte of the string
     for byte in string.as_bytes() {
-
         // get each of the eight bits of a byte and push it seperatly
         for i in (0..8).rev() {
             bitvec.push((byte & (1 << i)) / (1 << i));
@@ -26,7 +25,6 @@ pub fn bitvec_to_str(bitvec: BitVec) -> String {
 
     // iterate over every bit
     for i in 0..bitvec.len() {
-
         // every eighth bit, push a new empty byte
         if i % 8 == 0 {
             bytes.push(0);

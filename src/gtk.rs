@@ -1,15 +1,15 @@
 mod steganography;
 
-use gtk::{Align, Application, ApplicationWindow, Box as GtkBox, Button, CheckButton, Entry, Inhibit, Label, Orientation, Switch};
 use gtk::prelude::*;
+use gtk::{
+    Align, Application, ApplicationWindow, Box as GtkBox, Button, CheckButton, Entry, Inhibit,
+    Label, Orientation, Switch,
+};
 
-use steganography::{encrypt, decrypt};
+use steganography::{decrypt, encrypt};
 
 fn main() {
-    let application = Application::new(
-        Some("xyz.rabuu.steganos"),
-        Default::default(),
-    );
+    let application = Application::new(Some("xyz.rabuu.steganos"), Default::default());
     application.connect_activate(build_ui);
     application.run();
 }
@@ -20,12 +20,10 @@ fn build_ui(application: &Application) {
         .title("steganos")
         .build();
 
-
     let global_box = GtkBox::builder()
         .orientation(Orientation::Vertical)
         .spacing(40)
         .build();
-
 
     let mode_box = GtkBox::builder()
         .orientation(Orientation::Horizontal)
@@ -33,18 +31,12 @@ fn build_ui(application: &Application) {
         .spacing(10)
         .halign(Align::Center)
         .build();
-    let mode_label_encrypt = Label::builder()
-        .label("encrypt")
-        .build();
-    let mode_label_decrypt = Label::builder()
-        .label("decrypt")
-        .build();
-    let mode_switch = Switch::builder()
-        .build();
+    let mode_label_encrypt = Label::builder().label("encrypt").build();
+    let mode_label_decrypt = Label::builder().label("decrypt").build();
+    let mode_switch = Switch::builder().build();
     mode_box.append(&mode_label_encrypt);
     mode_box.append(&mode_switch);
     mode_box.append(&mode_label_decrypt);
-
 
     let eom_box = GtkBox::builder()
         .orientation(Orientation::Horizontal)
@@ -55,12 +47,9 @@ fn build_ui(application: &Application) {
     let eom_entry = Entry::builder()
         .placeholder_text("EOM (default is: *[END]*)")
         .build();
-    let include_eom = CheckButton::builder()
-        .label("Include EOM")
-        .build();
+    let include_eom = CheckButton::builder().label("Include EOM").build();
     eom_box.append(&eom_entry);
     eom_box.append(&include_eom);
-
 
     let entry_box = GtkBox::builder()
         .orientation(Orientation::Horizontal)
@@ -79,7 +68,6 @@ fn build_ui(application: &Application) {
     entry_box.append(&key_entry);
     entry_box.append(&msg_entry);
 
-
     let file_box = GtkBox::builder()
         .orientation(Orientation::Horizontal)
         .spacing(20)
@@ -97,16 +85,12 @@ fn build_ui(application: &Application) {
     file_box.append(&input_entry);
     file_box.append(&output_entry);
 
-
     let run_box = GtkBox::builder()
         .orientation(Orientation::Horizontal)
         .halign(Align::Center)
         .build();
-    let run_btn = Button::builder()
-        .label("Run")
-        .build();
+    let run_btn = Button::builder().label("Run").build();
     run_box.append(&run_btn);
-
 
     global_box.append(&mode_box);
     global_box.append(&eom_box);
@@ -129,7 +113,8 @@ fn build_ui(application: &Application) {
     });
 
     run_btn.connect_clicked(move |_| {
-        if mode_switch.state() { // decrypt
+        // decrypt
+        if mode_switch.state() {
             let image_path = &input_entry.text()[..];
             let key = &key_entry.text()[..];
             let mut eom = &eom_entry.text()[..];
@@ -139,20 +124,23 @@ fn build_ui(application: &Application) {
                 eom = "*[END]*";
             }
 
-            let decrypted_msg = decrypt(image_path, key, eom, include_eom).expect("Decryption failed");
+            let decrypted_msg =
+                decrypt(image_path, key, eom, include_eom).expect("Decryption failed");
             msg_entry_clone.set_text(&decrypted_msg[..]);
-
-        } else { // encrypt
+        }
+        // encrypt
+        else {
             let message = &msg_entry_clone.text()[..];
             let key = &key_entry.text()[..];
             let input_path = &input_entry.text()[..];
             let output_path = &output_entry.text()[..];
 
             let encrypted_img = encrypt(message, key, input_path).expect("Encryption failed");
-            encrypted_img.save(output_path).expect("Saving image failed");
+            encrypted_img
+                .save(output_path)
+                .expect("Saving image failed");
         }
     });
 
     window.show();
-
 }

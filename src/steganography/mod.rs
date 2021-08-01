@@ -1,11 +1,10 @@
 mod utils;
 
-use image::{DynamicImage, GenericImage, GenericImageView, ImageError, io::Reader as ImageReader};
+use image::{io::Reader as ImageReader, DynamicImage, GenericImage, GenericImageView, ImageError};
 use utils::*;
 
 /* ENCRYPTION FUNCTION */
 pub fn encrypt(msg: &str, key: &str, input_path: &str) -> Result<DynamicImage, ImageError> {
-
     // read image
     let mut img = ImageReader::open(input_path)?.decode()?;
 
@@ -20,13 +19,11 @@ pub fn encrypt(msg: &str, key: &str, input_path: &str) -> Result<DynamicImage, I
     // iterate through the pixels of the image
     for i in 0..img.width() {
         for j in 0..img.height() {
-
             // store the pixel
             let mut pix = img.get_pixel(i, j);
 
             // iterate through the RGB values of each pixel
             for rgb in 0..3 {
-
                 // current key value == 0 -> manipulate last bit
                 // current key value == 1 -> manipulate the last two bits
                 match key_bits[key_pos % key_bits.len()] {
@@ -34,15 +31,15 @@ pub fn encrypt(msg: &str, key: &str, input_path: &str) -> Result<DynamicImage, I
                         pix[rgb] >>= 1; // bit shift to get rid of last bit
                         pix[rgb] = (pix[rgb] << 1) | msg_bits[msg_pos % msg_bits.len()]; // shift back and set last bit to msg_bit
                         msg_pos += 1; // increase position of current msg_bit to hide
-                    },
+                    }
                     1 => {
                         // same as above but with last two bits
                         pix[rgb] >>= 2;
                         pix[rgb] = (pix[rgb] << 2) | (msg_bits[msg_pos % msg_bits.len()] << 1);
                         pix[rgb] |= msg_bits[(msg_pos + 1) % msg_bits.len()];
                         msg_pos += 2;
-                    },
-                    _ => panic!("BitVec contains something else than 0 or 1")
+                    }
+                    _ => panic!("BitVec contains something else than 0 or 1"),
                 }
 
                 // save manipulated pixel in the image
@@ -55,12 +52,15 @@ pub fn encrypt(msg: &str, key: &str, input_path: &str) -> Result<DynamicImage, I
 
     // return the manipulated image
     Ok(img)
-
 }
 
 /* DECRYPTION FUNCTION */
-pub fn decrypt(input_path: &str, key: &str, eom: &str, include_eom: bool) -> Result<String, ImageError> {
-
+pub fn decrypt(
+    input_path: &str,
+    key: &str,
+    eom: &str,
+    include_eom: bool,
+) -> Result<String, ImageError> {
     // read image
     let img = ImageReader::open(input_path)?.decode()?;
 
@@ -76,24 +76,22 @@ pub fn decrypt(input_path: &str, key: &str, eom: &str, include_eom: bool) -> Res
     // iterate through the pixels of the image
     for i in 0..img.width() {
         for j in 0..img.height() {
-
             // store the pixel
             let pix = img.get_pixel(i, j);
 
             // iterate through the RGB values of each pixel
             for rgb in 0..3 {
-
                 // current key value == 0 -> store last bit
                 // current key value == 1 -> store last two bits
                 match key_bits[key_pos % key_bits.len()] {
                     0 => {
                         msg_bits.push(pix[rgb] & 1); // push least significant bit
-                    },
+                    }
                     1 => {
                         msg_bits.push((pix[rgb] & (1 << 1)) / 2); // push second least significant bit
                         msg_bits.push(pix[rgb] & 1); // push least significant bit
-                    },
-                    _ => panic!()
+                    }
+                    _ => panic!(),
                 }
                 key_pos += 1; // next round there is a new key value
             }
@@ -106,5 +104,4 @@ pub fn decrypt(input_path: &str, key: &str, eom: &str, include_eom: bool) -> Res
     // EOM trim and return
     let msg = cut_str_eom(msg, eom, include_eom);
     Ok(msg)
-    
 }
