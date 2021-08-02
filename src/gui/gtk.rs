@@ -1,12 +1,8 @@
-mod steganography;
-
 use gtk::prelude::*;
 use gtk::{
     Align, Application, ApplicationWindow, Box as GtkBox, Button, CheckButton, Entry, Inhibit,
     Label, Orientation, Switch,
 };
-
-use steganography::{decrypt, encrypt};
 
 fn main() {
     let application = Application::new(Some("xyz.rabuu.steganos"), Default::default());
@@ -125,7 +121,7 @@ fn build_ui(application: &Application) {
             }
 
             let decrypted_msg =
-                decrypt(image_path, key, eom, include_eom).expect("Decryption failed");
+                steganos::decrypt(image_path, key, eom, include_eom).expect("Decryption failed");
             msg_entry_clone.set_text(&decrypted_msg[..]);
         }
         // encrypt
@@ -135,7 +131,8 @@ fn build_ui(application: &Application) {
             let input_path = &input_entry.text()[..];
             let output_path = &output_entry.text()[..];
 
-            let encrypted_img = encrypt(message, key, input_path).expect("Encryption failed");
+            let encrypted_img =
+                steganos::encrypt(message, key, input_path).expect("Encryption failed");
             encrypted_img
                 .save(output_path)
                 .expect("Saving image failed");

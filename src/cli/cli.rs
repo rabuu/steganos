@@ -2,16 +2,12 @@
 #[macro_use]
 extern crate clap; // CLI framework
 
-/* INTERN MODULES */
-mod steganography;
-
 /* IMPORTS */
 use clap::App;
 
 use std::fs::File;
 use std::io::Write;
 
-use steganography::{decrypt, encrypt};
 
 /* DEFAULTS */
 const ENCRYPTED_OUTPUT_DEFAULT: &str = "./encrypted_image.png";
@@ -32,7 +28,7 @@ fn main() {
         let output = clap.value_of("output").unwrap_or(ENCRYPTED_OUTPUT_DEFAULT);
 
         // encrypt and save file
-        let encrypted_img = encrypt(message, key, image).expect("Encryption failed");
+        let encrypted_img = steganos::encrypt(message, key, image).expect("Encryption failed");
         encrypted_img.save(output).expect("Saving image failed");
     }
     // decrypt subcommand
@@ -44,7 +40,7 @@ fn main() {
         let include_eom = clap.is_present("include-eom");
 
         // decrypt and output message
-        let decrypted_msg = decrypt(image, key, eom, include_eom).unwrap();
+        let decrypted_msg = steganos::decrypt(image, key, eom, include_eom).unwrap();
 
         // if output location is given, write message to file; otherwise just print it out
         if clap.is_present("output") {

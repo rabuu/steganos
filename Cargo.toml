@@ -3,10 +3,10 @@ name = "steganos"
 version = "0.1.1"
 edition = "2018"
 
-default-run = "steganos"
+default-run = "steganos-cli"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+# DEPENDENCIES
 [dependencies]
 image = "0.23.14"
 clap = {version = "2.33.3", features = ["yaml"]}
@@ -15,6 +15,12 @@ clap = {version = "2.33.3", features = ["yaml"]}
 package = "gtk4"
 version = "0.2.0"
 
+
+# CRATES
+[[bin]]
+name = "steganos-cli"
+path = "src/cli/cli.rs"
+
 [[bin]]
 name = "steganos-gtk"
-path = "src/gtk.rs"
+path = "src/gui/gtk.rs"
