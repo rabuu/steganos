@@ -4,13 +4,16 @@ or to extract a message from such an image, respectively.
 
 ## usage
 ```sh
-# encryption:
-steganos encrypt --image <IMAGE_FILE> --message <MESSAGE_STRING> --key <KEY_STRING> [--output <OUTPUT_FILE>]
-steganos encrypt -i <IMAGE_FILE> -m <MESSAGE_STRING> -k <KEY_STRING> [-o <OUTPUT_FILE>] # shorter version
+# encryption (CLI):
+steganos-cli encrypt --image <IMAGE_FILE> --message <MESSAGE_STRING> --key <KEY_STRING> [--output <OUTPUT_FILE>]
+steganos-cli encrypt -i <IMAGE_FILE> -m <MESSAGE_STRING> -k <KEY_STRING> [-o <OUTPUT_FILE>] # shorter version
 
-# decryption:
-steganos decrypt --image <IMAGE_FILE> --key <KEY_STRING> [--end-of-message <EOM_STRING>] [--include-eom]
-steganos decrypt -i <IMAGE_FILE> -k <KEY_STRING> [-e <EOM_STRING>] [-E] # shorter version
+# decryption (CLI):
+steganos-cli decrypt --image <IMAGE_FILE> --key <KEY_STRING> [--end-of-message <EOM_STRING>] [--include-eom]
+steganos-cli decrypt -i <IMAGE_FILE> -k <KEY_STRING> [-e <EOM_STRING>] [-E] # shorter version
+
+# GTK app (not recommended)
+steganos-gtk
 ```
 
 ## basic concept
