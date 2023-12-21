@@ -3,7 +3,7 @@ name = "steganos"
 version = "0.1.1"
 edition = "2018"
 
-default-run = "steganos-cli"
+default-run = "steganos"
 
 
 # DEPENDENCIES
@@ -11,16 +11,7 @@ default-run = "steganos-cli"
 image = "0.23.14"
 clap = {version = "2.33.3", features = ["yaml"]}
 
-[dependencies.gtk]
-package = "gtk4"
-version = "0.2.0"
-
-
 # CRATES
 [[bin]]
-name = "steganos-cli"
+name = "steganos"
 path = "src/cli/cli.rs"
-
-[[bin]]
-name = "steganos-gtk"
-path = "src/gui/gtk.rs"
